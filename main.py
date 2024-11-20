@@ -1,7 +1,6 @@
 from dotenv import dotenv_values
 
-from interactions import OptionType, slash_option, slash_command, SlashContext, Embed, SlashCommandChoice
-import interactions
+from interactions import OptionType, slash_option, slash_command, SlashContext, Embed, SlashCommandChoice, BaseContext, Permissions, slash_default_member_permission
 
 from interactions import Client, Intents, listen
 
@@ -14,10 +13,11 @@ import sqlite3
 
 import waybackpy
 
+import csv
 
-bot = Client(intents=Intents.DEFAULT)
+
 TOKEN = dotenv_values(".env")["TOKEN"]
-bot = interactions.Client(token=TOKEN)
+bot = Client(token=TOKEN)
 
 con = sqlite3.connect("reports.db")
 
@@ -77,7 +77,7 @@ async def report(ctx: SlashContext, link, source, why="", pseudo="", platform=""
     # ctx.locale
 
     cur = con.cursor()
-    cur.execute("INSERT INTO reports (user_link, source_link, archive_link, description, Pseudo, plateforme, userID) VALUES(?, ?, ?, ?, ?, ?, ?)", data)
+    cur.execute("INSERT INTO reports (user_link, source_link, archive_link, description, Pseudo, platform, userID) VALUES(?, ?, ?, ?, ?, ?, ?)", data)
     con.commit()
 
     embed = Embed(
@@ -86,5 +86,24 @@ async def report(ctx: SlashContext, link, source, why="", pseudo="", platform=""
         color=0xff0000
     )
     await ctx.send(embed=embed)
+
+@slash_command(name="export", description="Export all data")
+@slash_default_member_permission(Permissions.MANAGE_EVENTS | Permissions.MANAGE_THREADS)
+async def export(ctx: SlashContext):
+    #if ctx.author.guild_permissions.administrator:
+        cur = con.cursor()
+        cur.execute("SELECT * FROM reports")
+        data = cur.fetchall()
+
+        with open('reports.csv', 'w', newline='') as f:
+            writer = csv.writer(f, delimiter=";")
+
+            for row in data:
+                writer.writerow(row)
+
+        await ctx.send("Here is all the data that was saved in the database",files=["./reports.csv"])
+    #else:
+        #await ctx.send("You do not have permission to use this command.")
+
 
 bot.start()
