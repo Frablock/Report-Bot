@@ -5,5 +5,6 @@ CREATE TABLE reports (
     archive_link TEXT,
     description TEXT,
     Pseudo TEXT,
+    platform TEXT,
     userID INTEGER
 );

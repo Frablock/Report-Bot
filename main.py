@@ -51,7 +51,13 @@ async def on_ready():
     required=False,
     opt_type=OptionType.STRING
 )
-async def report(ctx: SlashContext, link, source, why="", pseudo=""):
+@slash_option(
+    name="platform",
+    description="Platform of the report",
+    required=False,
+    opt_type=OptionType.STRING
+)
+async def report(ctx: SlashContext, link, source, why="", pseudo="", platform=""):
     await ctx.send("Adding this user to the report database. Please wait\nhttps://tenor.com/view/m%C3%A9lenchon-bg-jlm-m%C3%A9lanchon-pr%C3%A9sidentielles-gif-23207938", ephemeral=True)
     url = source
     wayback = waybackpy.Url(url)
@@ -63,6 +69,7 @@ async def report(ctx: SlashContext, link, source, why="", pseudo=""):
         str(archive_url),
         why,
         pseudo,
+        platform,
         ctx.author.id
     ]
     print(data)
@@ -70,7 +77,7 @@ async def report(ctx: SlashContext, link, source, why="", pseudo=""):
     # ctx.locale
 
     cur = con.cursor()
-    cur.execute("INSERT INTO reports (user_link, source_link, archive_link, description, Pseudo, userID) VALUES(?, ?, ?, ?, ?, ?)", data)
+    cur.execute("INSERT INTO reports (user_link, source_link, archive_link, description, Pseudo, plateforme, userID) VALUES(?, ?, ?, ?, ?, ?, ?)", data)
     con.commit()
 
     embed = Embed(
