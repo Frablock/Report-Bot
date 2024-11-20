@@ -21,8 +21,6 @@ bot = interactions.Client(token=TOKEN)
 
 con = sqlite3.connect("reports.db")
 
-cur = con.cursor()
-
 @listen()
 async def on_ready():
     print("The bot is now running")
@@ -36,9 +34,15 @@ async def on_ready():
     opt_type=OptionType.STRING
 )
 @slash_option(
+    name="source",
+    description="Source link to justify your report. Could contains slurs",
+    required=True,
+    opt_type=OptionType.STRING
+)
+@slash_option(
     name="why",
     description="Why did you report this profile ?",
-    required=True,
+    required=False,
     opt_type=OptionType.STRING
 )
 @slash_option(
@@ -47,14 +51,15 @@ async def on_ready():
     required=False,
     opt_type=OptionType.STRING
 )
-async def report(ctx: SlashContext, link, why, pseudo=""):
+async def report(ctx: SlashContext, link, source, why="", pseudo=""):
     await ctx.send("Adding this user to the report database. Please wait\nhttps://tenor.com/view/m%C3%A9lenchon-bg-jlm-m%C3%A9lanchon-pr%C3%A9sidentielles-gif-23207938", ephemeral=True)
-    url = link
+    url = source
     wayback = waybackpy.Url(url)
     archive_url = wayback.save()
 
     data = [
         link,
+        source,
         str(archive_url),
         why,
         pseudo,
@@ -63,7 +68,10 @@ async def report(ctx: SlashContext, link, why, pseudo=""):
     print(data)
 
     # ctx.locale
+
+    cur = con.cursor()
     cur.execute("INSERT INTO reports (user_link, source_link, archive_link, description, Pseudo, userID) VALUES(?, ?, ?, ?, ?, ?)", data)
+    con.commit()
 
     embed = Embed(
         title="Your report was added",
