@@ -28,7 +28,7 @@ cur = con.cursor()
     opt_type=OptionType.STRING
 )
 @slash_option(
-    name="Why ?",
+    name="why",
     description="Why did you report this profile ?",
     required=True,
     opt_type=OptionType.STRING
