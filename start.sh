@@ -13,6 +13,6 @@ fi
 # Activate the virtual environment
 source "$VENV_PATH/bin/activate"
 
-pip -r install requirements.txt
+pip install -r requirements.txt
 
 python main.py
