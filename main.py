@@ -23,6 +23,11 @@ con = sqlite3.connect("reports.db")
 
 cur = con.cursor()
 
+@listen()
+async def on_ready():
+    print("The bot is now running")
+    print(f"This bot is owned by {bot.owner}")
+
 @slash_command(name="report", description="Report a user/link/profile on a social-network")
 @slash_option(
     name="link",
@@ -36,16 +41,34 @@ cur = con.cursor()
     required=True,
     opt_type=OptionType.STRING
 )
-async def report(ctx: SlashContext, link, why):
+@slash_option(
+    name="pseudo",
+    description="Pseudonyme to report",
+    required=False,
+    opt_type=OptionType.STRING
+)
+async def report(ctx: SlashContext, link, why, pseudo=""):
     await ctx.send("Adding this user to the report database. Please wait\nhttps://tenor.com/view/m%C3%A9lenchon-bg-jlm-m%C3%A9lanchon-pr%C3%A9sidentielles-gif-23207938", ephemeral=True)
     url = link
     wayback = waybackpy.Url(url)
     archive_url = wayback.save()
 
+    data = [
+        link,
+        str(archive_url),
+        why,
+        pseudo,
+        ctx.author.id
+    ]
+    print(data)
+
+    # ctx.locale
+    cur.execute("INSERT INTO reports (user_link, source_link, archive_link, description, Pseudo, userID) VALUES(?, ?, ?, ?, ?, ?)", data)
+
     embed = Embed(
-        title="Report",
-        description=ctx.locale+" "+link+" "+why+" "+str(archive_url),
-        color=0xff0000 # RED color
+        title="Your report was added",
+        description="link : "+link+"\nDescription : \n"+why,
+        color=0xff0000
     )
     await ctx.send(embed=embed)
 
