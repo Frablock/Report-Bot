@@ -36,7 +36,7 @@ cur = con.cursor()
 async def report(ctx: SlashContext, link, why):
     embed = Embed(
         title="Report",
-        description=ctx.locale+" "+link+" "+,
+        description=ctx.locale+" "+link+" "+why,
         color=0xff0000 # RED color
     )
     await ctx.send(embed=embed)
