@@ -112,7 +112,7 @@ async def export(ctx: SlashContext):
     required=True,
     opt_type=OptionType.STRING
 )
-async def export(ctx: SlashContext, pseudo):
+async def getprofileinfo(ctx: SlashContext, pseudo):
     cur = con.cursor()
     cur.execute("SELECT * FROM reports WHERE Pseudo = ?", (pseudo))
     data = cur.fetchall()
