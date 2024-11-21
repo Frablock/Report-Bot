@@ -123,6 +123,12 @@ async def getprofileinfo(ctx: SlashContext, pseudo):
     for d in data:
         await ctx.send("## "+str(d[5])+"\n> plateforme : "+str(d[6])+"\n> Raison : "+str(d[4])+"\n> Post problématique : [Post original](<"+str(d[2])+">)  [Lien archive.org](<"+str(d[3])+">)\n> Statut : à implémenter")
 
+
+all_networks = [
+    {"regex":r"bsky\.app/profile/([^/]+)", "p":"BlueSky"},
+    {"regex":r"twitter\.com/([^/]+)", "p":"X (Twitter)"},
+    {"regex":r"x\.com/([^/]+)", "p":"X (Twitter)"},
+]
 """
 Réponse si des liens sont envoyés
 """
@@ -137,19 +143,19 @@ async def on_message_create(event):
                     "Ce post provient d’un compte signalé F",
                     "C'est un compte cancel ça, faites mieux"
                     ])
-    print("message : "+event.message.content)
-    # Vérifie si le message contient un lien vers "bsky.social/"
-    if "bsky.app/" in event.message.content:
-        # Extrait le pseudonyme à partir du lien
-
-        match = re.search(r"bsky\.app/profile/([^/]+)/post/", event.message.content)
-        print(match)
+    
+    for d in all_networks:
+        # Vérifie si le message contient un lien vers "bsky.social/"
+        match = re.search(d["regex"], event.message.content)
         if match:
             url_username = match.group(1)
 
             # Connexion à la base de données et vérification du pseudonyme
             cur = con.cursor()
-            cur.execute("SELECT Pseudo FROM reports WHERE platform = \"BlueSky\"")
+            data = [
+                d["p"]
+            ]
+            cur.execute("SELECT Pseudo FROM reports WHERE platform = ?", data)
             data = cur.fetchall()
 
             # Vérifie si le pseudonyme est dans la base de données
