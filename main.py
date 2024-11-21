@@ -114,12 +114,15 @@ async def export(ctx: SlashContext):
 )
 async def getprofileinfo(ctx: SlashContext, pseudo):
     cur = con.cursor()
-    cur.execute("SELECT * FROM reports WHERE Pseudo = ?", (pseudo))
+    data = [
+        "%"+pseudo+"%"
+    ]
+    cur.execute("SELECT * FROM reports WHERE Pseudo LIKE ?", data)
     data = cur.fetchall()
 
     await ctx.send("Here is all the report that concern the provided user")
     for d in data:
-        await ctx.send("> Raison : "+str(d["description"])+"\n> Post problématique : [Post original](<"+str(d["source_link"])+">)  [Lien archive.org](<"+str(d["archive_link"])+">)\n> Statut : à implémenter")
+        await ctx.send("## "+str(5)+" sur "+str(6)+"\n> Raison : "+str(d[4])+"\n> Post problématique : [Post original](<"+str(d[2])+">)  [Lien archive.org](<"+str(d[3])+">)\n> Statut : à implémenter")
 
 
 
