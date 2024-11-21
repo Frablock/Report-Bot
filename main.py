@@ -128,6 +128,8 @@ all_networks = [
     {"regex":r"bsky\.app/profile/([^/]+)", "p":"BlueSky"},
     {"regex":r"twitter\.com/([^/]+)", "p":"X (Twitter)"},
     {"regex":r"x\.com/([^/]+)", "p":"X (Twitter)"},
+    {"regex":r"tiktok\.com/@([^/]+)", "p":"TikTok"},
+    {"regex":r"instagram\.com/([^/]+)", "p":"Instagram"},
 ]
 """
 Réponse si des liens sont envoyés
