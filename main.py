@@ -2,7 +2,7 @@ from dotenv import dotenv_values
 
 from interactions import Modal, ModalContext, ParagraphText, ShortText, OptionType, slash_option, slash_command, SlashContext, Embed, SlashCommandChoice, BaseContext, Permissions, slash_default_member_permission
 
-from interactions import Client, Intents, listen
+from interactions import Client, Intents, listen, AllowedMentions
 
 
 import asyncio
@@ -154,7 +154,7 @@ async def on_message_create(event):
 
             # Vérifie si le pseudonyme est dans la base de données
             if (url_username,) in data:
-                await event.message.reply(ret_message)
+                await event.message.reply(ret_message, allowed_mentions=AllowedMentions(replied_user=False))
                 
    
 
