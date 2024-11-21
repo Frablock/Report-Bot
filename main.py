@@ -28,13 +28,14 @@ async def on_ready():
     print("The bot is now running")
     print(f"This bot is owned by {bot.owner}")
 
+
 @slash_command(name="report", description="Signaler un utilisateur/lien")
 async def report(ctx: SlashContext):
     my_modal = Modal(
         ShortText(label="Lien vers le profil", custom_id="link", required=True),
         ShortText(label="Sources", custom_id="source", required=True),
         ShortText(label="Pseudo à signaler", custom_id="pseudo", required=True),
-        ShortText(label="Plateforme", custom_id="platform", required=True),
+        ShortText(label="Plateforme", placeholder="BlueSky, YouTube, X (Twitter), Instagram, TikTok", custom_id="platform", required=True),
         ParagraphText(label="Pourquoi ?", custom_id="why", required=False),
         title="Signaler un utilisateur",
         custom_id="report_modal",
