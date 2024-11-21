@@ -40,14 +40,14 @@ async def on_ready():
     opt_type=OptionType.STRING
 )
 @slash_option(
-    name="why",
-    description="Why did you report this profile ?",
-    required=False,
+    name="pseudo",
+    description="Pseudonyme to report",
+    required=True,
     opt_type=OptionType.STRING
 )
 @slash_option(
-    name="pseudo",
-    description="Pseudonyme to report",
+    name="why",
+    description="Why did you report this profile ?",
     required=False,
     opt_type=OptionType.STRING
 )
@@ -57,7 +57,7 @@ async def on_ready():
     required=False,
     opt_type=OptionType.STRING
 )
-async def report(ctx: SlashContext, link, source, why="", pseudo="", platform=""):
+async def report(ctx: SlashContext, link, source, pseudo, why="", platform=""):
     await ctx.send("Adding this user to the report database. Please wait\nhttps://tenor.com/view/m%C3%A9lenchon-bg-jlm-m%C3%A9lanchon-pr%C3%A9sidentielles-gif-23207938", ephemeral=True)
     url = source
     wayback = waybackpy.Url(url)
@@ -104,6 +104,23 @@ async def export(ctx: SlashContext):
         await ctx.send("Here is all the data that was saved in the database",files=["./reports.csv"])
     #else:
         #await ctx.send("You do not have permission to use this command.")
+
+@slash_command(name="getprofileinfo", description="Get information about a user")
+@slash_option(
+    name="pseudo",
+    description="Pseudonyme to search for",
+    required=True,
+    opt_type=OptionType.STRING
+)
+async def export(ctx: SlashContext, pseudo):
+    cur = con.cursor()
+    cur.execute("SELECT * FROM reports WHERE Pseudo = ?", (pseudo))
+    data = cur.fetchall()
+
+    await ctx.send("Here is all the report that concern the provided user")
+    for d in data:
+        await ctx.send("> Raison : "+str(d["description"])+"\n> Post problématique : [Post original](<"+str(d["source_link"])+">)  [Lien archive.org](<"+str(d["archive_link"])+">)\n> Statut : à implémenter")
+
 
 
 bot.start()
